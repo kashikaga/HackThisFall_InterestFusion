@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
-const bcrypt = require('bcryptjs')
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
   {
@@ -66,6 +66,9 @@ const userSchema = new mongoose.Schema(
     },
     skills: {
       type: [String],
+    },
+    onesignalPlayerId: {
+      type: String,
     },
   },
   {

@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 4s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      # use `ipconfig` in cmd to get your private ip address
+      - targets: ["<your private IP address>:7777"]

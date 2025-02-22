@@ -5,6 +5,7 @@ import { addUser } from "../../utils/userSlice";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../../utils/constants";
 import { motion } from "framer-motion";
+import OneSignal from "react-onesignal";
 
 const Login2 = () => {
   const [emailId, setEmailId] = useState("");
@@ -20,7 +21,7 @@ const Login2 = () => {
     try {
       const res = await axios.post(
         BASE_URL + "/login",
-        { emailId, password },
+        { emailId, password, playerId: OneSignal.User.PushSubscription.id },
         { withCredentials: true }
       );
       dispatch(addUser(res.data));
@@ -34,7 +35,14 @@ const Login2 = () => {
     try {
       const res = await axios.post(
         BASE_URL + "/signup",
-        { firstName, lastName, emailId, password },
+        {
+          firstName,
+          lastName,
+          emailId,
+          password,
+
+          playerId: OneSignal.User.PushSubscription.id,
+        },
         { withCredentials: true }
       );
       dispatch(addUser(res.data.data));
