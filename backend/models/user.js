@@ -71,10 +71,8 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
     socialLinks: {
-      default: {
-        instagramLink: "",
-        otherLinks: "",
-      },
+      instagramLink: { type: String, default: "" },
+      otherLink: { type: String, default: "" },
     },
   },
   {
