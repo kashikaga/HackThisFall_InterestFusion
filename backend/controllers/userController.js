@@ -94,6 +94,14 @@ const getUserFeed = async (req, res, next) => {
           numMatchingSkills: { $size: "$matchingSkills" },
         },
       },
+      {
+        $project: {
+          password: 0,
+          onesignalPlayerId: 0,
+          createdAt: 0,
+          updatedAt: 0,
+        },
+      },
       // this will remove all the connected user
       {
         $match: {

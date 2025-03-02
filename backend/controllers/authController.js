@@ -5,6 +5,7 @@ const { validateSignUpData } = require("../utils/validation");
 const sendEmail = require("../config/sendEmail");
 const validator = require("validator");
 const { z } = require("zod");
+const removeSensitiveData = require("../utils/removeSensitiveData");
 
 // Schema definitions
 const emailSchema = z.string().email("Invalid email format");
@@ -176,7 +177,10 @@ class AuthController {
         welcomeTemplate.html
       );
 
-      res.json({ message: "Welcome to Interest Fusion!", data: savedUser });
+      res.json({
+        message: "Welcome to Interest Fusion!",
+        data: res.send(removeSensitiveData(savedUser)),
+      });
     } catch (err) {
       next(err);
     }
@@ -225,8 +229,7 @@ class AuthController {
           loginTemplate.text,
           loginTemplate.html
         );
-
-        res.send(user);
+        res.send(removeSensitiveData(user));
       } else {
         throw new Error("Invalid credentials");
       }

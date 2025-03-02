@@ -50,7 +50,7 @@ function Signup() {
           emailId: email,
           password,
           skills: allTags.tags,
-          playerId: OneSignal.User.PushSubscription.id,
+          playerId: OneSignal.User.PushSubscription.id ?? "",
         },
         { withCredentials: true }
       );

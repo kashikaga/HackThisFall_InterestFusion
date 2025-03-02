@@ -14,6 +14,7 @@ const getPublicProfileUrl = require("../utils/getPublicProfileUrl");
 const {
   getUniqueIdForPrifileShare,
 } = require("../utils/getUniqueIdForProfileShare");
+const removeSensitiveData = require("../utils/removeSensitiveData");
 
 const CACHE_DURATION = 3600;
 
@@ -30,7 +31,7 @@ const viewProfile = async (req, res, next) => {
     }
 
     // Fetch data (assuming req.user contains the profile data)
-    const user = req.user;
+    const user = removeSensitiveData(req.user);
 
     // Cache the data
     await redisClient.set(`user:${userId}`, JSON.stringify(user), {
