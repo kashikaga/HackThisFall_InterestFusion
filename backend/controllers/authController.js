@@ -146,8 +146,16 @@ class AuthController {
   async signup(req, res, next) {
     try {
       validateSignUpData(req);
-      const { firstName, lastName, emailId, password, playerId, skills } =
-        req.body;
+      const {
+        firstName,
+        lastName,
+        emailId,
+        password,
+        playerId,
+        skills,
+        otherLink,
+        instagramLink,
+      } = req.body;
 
       const passwordHash = await bcrypt.hash(password, 10);
       const user = new User({
@@ -157,6 +165,10 @@ class AuthController {
         password: passwordHash,
         skills: skills ?? [],
         onesignalPlayerId: playerId,
+        socialLinks: {
+          instagramLink,
+          otherLink,
+        },
       });
 
       const savedUser = await user.save();
