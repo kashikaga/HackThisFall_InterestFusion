@@ -16,6 +16,8 @@ function Signup() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [instagramLink, setInstagramLink] = useState("");
+  const [otherLink, setotherLink] = useState("");
 
   const [allTags, setAllTags] = useState({ tags: [] });
 
@@ -51,6 +53,8 @@ function Signup() {
           password,
           skills: allTags.tags,
           playerId: OneSignal.User.PushSubscription.id ?? "",
+          instagramLink,
+          otherLink,
         },
         { withCredentials: true }
       );
@@ -80,7 +84,6 @@ function Signup() {
           <p>
             Let’s get you all set up so you can access your personal account.
           </p>
-
           <div className="flex mt-5">
             <input
               type="text"
@@ -104,12 +107,25 @@ function Signup() {
             placeholder="Email"
             className="w-full mt-2 px-4 py-2 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder=" Password "
+            className="w-full mb-2 mt-3  px-4 py-2 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="text"
+            value={instagramLink}
+            onChange={(e) => setInstagramLink(e.target.value)}
+            placeholder="Instagram Link"
+            className="w-full mb-2 mt-3  px-4 py-2 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />{" "}
+          <input
+            type="text"
+            value={otherLink}
+            onChange={(e) => setotherLink(e.target.value)}
+            placeholder="Other link"
             className="w-full mb-2 mt-3  px-4 py-2 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <TagsInput

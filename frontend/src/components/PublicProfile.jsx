@@ -100,6 +100,18 @@ function PublicProfile() {
             {publicUserData.firstName}
           </p>
           <p className="text-xl font-semibold">{publicUserData.about}</p>
+          {publicUserData.socialLinks ? (
+            <div className="flex flex-col">
+              <p className="text-xl font-semibold">
+                {publicUserData.socialLinks.instagramLink}
+              </p>
+              <p className="text-xl font-semibold">
+                {publicUserData.socialLinks.otherLink}
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
 
           <div className="h-3 w-full mt-2 mb-5 bg-[#6b10cb]"></div>
 
@@ -108,6 +120,14 @@ function PublicProfile() {
               initial="Full Name "
               detail={publicUserData.firstName + "  " + publicUserData.lastName}
             />
+            {publicUserData.socialLinks ? (
+              <PublicProfileText
+                initial="Gender "
+                detail={publicUserData.gender}
+              />
+            ) : (
+              <></>
+            )}
             {publicUserData.gender ? (
               <PublicProfileText
                 initial="Gender "

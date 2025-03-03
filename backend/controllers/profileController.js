@@ -195,6 +195,7 @@ const getPublicProfile = async (req, res) => {
       photoUrl: 1,
       about: 1,
       skills: 1,
+      socialLinks: 1,
     }
   );
   if (!userData) {
