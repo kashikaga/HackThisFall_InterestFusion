@@ -46,13 +46,23 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
             <ul className="space-y-4">
-              <li className="flex items-center space-x-3 text-gray-400 hover:text-white transition-colors">
-                <Phone className="w-5 h-5" />
-                <span>+91 1234567899</span>
+              <li>
+                <a 
+                  href="tel:+917222993745" 
+                  className="flex items-center space-x-3 text-gray-400 hover:text-white transition-colors"
+                >
+                  <Phone className="w-5 h-5" />
+                  <span>+91 7222993745</span>
+                </a>
               </li>
-              <li className="flex items-center space-x-3 text-gray-400 hover:text-white transition-colors">
-                <Mail className="w-5 h-5" />
-                <span>contact@interestfusion.com</span>
+              <li>
+                <a 
+                  href="mailto:contact@interestfusion.com"
+                  className="flex items-center space-x-3 text-gray-400 hover:text-white transition-colors"
+                >
+                  <Mail className="w-5 h-5" />
+                  <span>contact@interestfusion.com</span>
+                </a>
               </li>
               <li className="flex items-center space-x-3 text-gray-400 hover:text-white transition-colors">
                 <MapPin className="w-5 h-5" />

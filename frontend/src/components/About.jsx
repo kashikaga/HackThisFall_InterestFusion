@@ -70,7 +70,7 @@ const About = () => {
 
   return (
     <div className={`min-h-screen ${isDark ? 'bg-gradient-to-b from-gray-900 to-purple-900' : 'bg-gradient-to-b from-white to-purple-50'}`}>
-      <motion.header 
+      <motion.div 
         className={`${isDark ? 'bg-gradient-to-r from-purple-900 to-purple-800' : 'bg-gradient-to-r from-purple-600 to-purple-100'} text-white py-16 relative`}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -84,15 +84,7 @@ const About = () => {
         >
           {isDark ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
         </motion.button>
-        <motion.h1 
-          className="text-4xl font-bold mb-4 text-center"
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          About InterestFusion
-        </motion.h1>
-      </motion.header>
+      </motion.div>
 
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">

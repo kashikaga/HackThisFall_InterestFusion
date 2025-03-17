@@ -120,4 +120,34 @@ const fusionPublishpost = async (req, res) => {
     }
 };
 
-module.exports = { fusionRegister, fusionSignup, fusionPublishpost, fusionAuth };
+const getFusionPost = async (req, res) => {
+    try {
+        console.log("Fetching Fusion posts...");
+        
+        // Check if the database connection is active
+        if (!fusionPost) {
+            return res.status(500).json({ message: "Database connection issue." });
+        }
+
+        // Fetch posts from the database, sorted by creation date
+        const posts = await fusionPost.find().sort({ createdAt: -1 });
+        
+        if (!posts || posts.length === 0) {
+            return res.status(404).json({ message: "No posts found." });
+        }
+
+        console.log(`Successfully fetched ${posts.length} posts.`);
+        res.status(200).json(posts);
+
+    } catch (error) {
+        console.error("Error fetching Fusion posts:", error);
+        res.status(500).json({ 
+            message: "Internal Server Error. Please try again later.", 
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
+    }
+};
+
+
+module.exports = { fusionRegister, fusionSignup, fusionPublishpost, fusionAuth,getFusionPost };

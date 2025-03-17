@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 
 const SupportPage = () => {
   const [ticket, setTicket] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -14,97 +16,94 @@ const SupportPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitted(true);
-
-    // Simulate form submission (replace with actual API call)
-    console.log("Support Ticket Submitted: ", ticket);
-
-    // Clear form
-    setTicket({ name: "", email: "", message: "" });
+    setLoading(true);
+    setTimeout(() => {
+      setSubmitted(true);
+      setLoading(false);
+      console.log("Support Ticket Submitted: ", ticket);
+      setTicket({ name: "", email: "", message: "" });
+    }, 2000);
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      {/* Header */}
-      <header className="bg-blue-500 text-white text-center py-4">
-        <h1 className="text-2xl font-bold">Support Center</h1>
-        <p className="text-sm">How can we help you today?</p>
-      </header>
+    <div className="bg-gray-900 min-h-screen text-gray-100 flex flex-col items-center">
+      <motion.header 
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 text-white text-center py-6 shadow-lg w-full border-b border-gray-700"
+      >
+        <h1 className="text-4xl font-extrabold tracking-wide">Support Center</h1>
+        <p className="text-md mt-1 font-light">How can we help you today?</p>
+      </motion.header>
 
-      {/* Main Content */}
-      <main className="p-6">
+      <motion.main 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="p-6 max-w-3xl mx-auto w-full"
+      >
         <section className="mb-8">
           <h2 className="text-xl font-semibold mb-4">Submit a Support Ticket</h2>
           {submitted && (
-            <p className="text-green-600 font-medium mb-4">
-              Thank you! Your ticket has been submitted.
-            </p>
+            <motion.p 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="text-green-400 font-medium mb-4"
+            >
+              ✅ Thank you! Your ticket has been submitted.
+            </motion.p>
           )}
-          <SupportForm
-            ticket={ticket}
-            handleChange={handleChange}
-            handleSubmit={handleSubmit}
-          />
+          <SupportForm ticket={ticket} handleChange={handleChange} handleSubmit={handleSubmit} loading={loading} />
         </section>
 
-        <section className="mb-8">
+        <motion.section
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="mb-8"
+        >
           <h2 className="text-xl font-semibold mb-4">Frequently Asked Questions</h2>
           <FAQ />
-        </section>
+        </motion.section>
 
-        <section>
+        <motion.section
+          initial={{ x: 50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
           <h2 className="text-xl font-semibold mb-4">Popular Topics</h2>
           <SupportTopics />
-        </section>
-      </main>
+        </motion.section>
+      </motion.main>
     </div>
   );
 };
 
-// Support Form Component
-const SupportForm = ({ ticket, handleChange, handleSubmit }) => {
+const SupportForm = ({ ticket, handleChange, handleSubmit, loading }) => {
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white shadow-lg rounded-lg p-6 space-y-4"
+    <motion.form 
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      onSubmit={handleSubmit} 
+      className="bg-gray-800 shadow-lg rounded-lg p-6 space-y-4"
     >
-      <input
-        type="text"
-        name="name"
-        placeholder="Your Name"
-        value={ticket.name}
-        onChange={handleChange}
-        className="w-full p-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
-        required
-      />
-      <input
-        type="email"
-        name="email"
-        placeholder="Your Email"
-        value={ticket.email}
-        onChange={handleChange}
-        className="w-full p-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
-        required
-      />
-      <textarea
-        name="message"
-        placeholder="Describe your issue"
-        value={ticket.message}
-        onChange={handleChange}
-        className="w-full p-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
-        required
-      ></textarea>
-      <button
-        type="submit"
-        className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+      <input type="text" name="name" placeholder="Your Name" value={ticket.name} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring focus:ring-blue-400" required />
+      <input type="email" name="email" placeholder="Your Email" value={ticket.email} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring focus:ring-blue-400" required />
+      <textarea name="message" placeholder="Describe your issue" value={ticket.message} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring focus:ring-blue-400" required></textarea>
+      <motion.button 
+        whileHover={{ scale: 1.05 }}
+        type="submit" disabled={loading} 
+        className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 rounded-lg hover:from-blue-600 hover:to-purple-600 disabled:bg-gray-500"
       >
-        Submit Ticket
-      </button>
-    </form>
+        {loading ? "Submitting..." : "Submit Ticket"}
+      </motion.button>
+    </motion.form>
   );
 };
 
-// FAQ Component
 const FAQ = () => {
   const faqs = [
     { question: "How do I reset my password?", answer: "Go to the login page and click 'Forgot Password'." },
@@ -113,30 +112,34 @@ const FAQ = () => {
   ];
 
   return (
-    <ul className="space-y-4">
+    <div>
       {faqs.map((faq, index) => (
-        <li key={index} className="bg-gray-100 border rounded-lg p-4 shadow-md">
-          <p className="font-bold">{faq.question}</p>
-          <p className="text-gray-700">{faq.answer}</p>
-        </li>
+        <motion.details 
+          key={index} 
+          className="bg-gray-700 border rounded-lg p-4 shadow-md mb-2 cursor-pointer"
+          whileHover={{ scale: 1.02 }}
+        >
+          <summary className="font-bold text-white">{faq.question}</summary>
+          <p className="text-gray-300 mt-2">{faq.answer}</p>
+        </motion.details>
       ))}
-    </ul>
+    </div>
   );
 };
 
-// Support Topics Component
 const SupportTopics = () => {
   const topics = ["Account Issues", "Payment Problems", "Technical Support", "Product Questions", "General Inquiries"];
 
   return (
     <div className="flex flex-wrap gap-4">
       {topics.map((topic, index) => (
-        <div
+        <motion.div
           key={index}
-          className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg shadow hover:bg-blue-200 cursor-pointer"
+          whileHover={{ scale: 1.1, boxShadow: "0px 0px 15px rgba(255, 255, 255, 0.6)" }}
+          className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-lg shadow-md hover:from-blue-600 hover:to-purple-600 cursor-pointer transition"
         >
           {topic}
-        </div>
+        </motion.div>
       ))}
     </div>
   );

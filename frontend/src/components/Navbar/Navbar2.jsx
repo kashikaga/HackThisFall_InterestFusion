@@ -17,6 +17,18 @@ const NavBar2 = () => {
       // Error handling logic
     }
   };
+  const handleCopyProfileURL = async () => {
+    try {
+      const url = await axios.get(BASE_URL + "/generate_public_url", {
+        withCredentials: true,
+      });
+      if (url.data.status == 1) {
+        navigator.clipboard.writeText(url.data.data.url);
+      }
+    } catch (err) {
+      // Error handling logic
+    }
+  };
 
   return (
     <div className="navbar bg-base-300 px-4 shadow-md">
@@ -58,6 +70,9 @@ const NavBar2 = () => {
                   <Link to="/requests">Requests</Link>
                 </li>
                 <li>
+                  <a onClick={handleCopyProfileURL}>Copy Profile URL</a>
+                </li>
+                <li>
                   <a onClick={handleLogout}>Logout</a>
                 </li>
               </ul>
@@ -68,7 +83,7 @@ const NavBar2 = () => {
             <Link to="/login" className="btn btn-primary">
               Login
             </Link>
-            <Link to="/login" className="btn btn-secondary">
+            <Link to="/signup" className="btn btn-secondary">
               Signup
             </Link>
           </div>

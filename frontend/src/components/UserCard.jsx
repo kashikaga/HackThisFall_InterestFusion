@@ -2,6 +2,7 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { removeUserFromFeed } from "../utils/feedSlice";
+import SkillComponent from "./SkillComponent";
 
 const UserCard = ({ user }) => {
   const { _id, firstName, lastName, photoUrl, age, gender, about } = user;
@@ -28,6 +29,31 @@ const UserCard = ({ user }) => {
           <h2 className="card-title">{firstName + " " + lastName}</h2>
           {age && gender && <p>{age + ", " + gender}</p>}
           <p>{about}</p>
+          <div class="grid grid-cols-[repeat(auto-fill,minmax(70px,1fr))] gap-2.5 ">
+            {user.skills.map((skill) => {
+              return (
+                <SkillComponent
+                  skill={skill}
+                  isMatched={
+                    user.matchingSkills
+                      ? user.matchingSkills.includes(skill)
+                      : false
+                  }
+                />
+              );
+            })}
+            {user.matchingSkills ? (
+              user.matchingSkills.length > 0 ? (
+                <div className={`rounded-full w-min p-2 border-2  `}>
+                  {user.matchingSkills.length}+
+                </div>
+              ) : (
+                <></>
+              )
+            ) : (
+              <></>
+            )}
+          </div>
           <div className="card-actions justify-center my-4">
             <button
               className="btn btn-primary"

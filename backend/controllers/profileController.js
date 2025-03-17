@@ -8,6 +8,13 @@ const {
 const { validateEditProfileData } = require("../utils/validation");
 const { upload_on_cloudinary } = require("../utils/cloudinary");
 const { errorMonitor } = require("winston-daily-rotate-file");
+const user = require("../models/user");
+const UserPublicData = require("../models/userPublicId");
+const getPublicProfileUrl = require("../utils/getPublicProfileUrl");
+const {
+  getUniqueIdForPrifileShare,
+} = require("../utils/getUniqueIdForProfileShare");
+const removeSensitiveData = require("../utils/removeSensitiveData");
 
 const CACHE_DURATION = 3600;
 
@@ -24,7 +31,7 @@ const viewProfile = async (req, res, next) => {
     }
 
     // Fetch data (assuming req.user contains the profile data)
-    const user = req.user;
+    const user = removeSensitiveData(req.user);
 
     // Cache the data
     await redisClient.set(`user:${userId}`, JSON.stringify(user), {
@@ -149,8 +156,58 @@ const addAvatar = async (req, res, next) => {
   }
 };
 
+const generatePublicId = async (req, res) => {
+  let isIDGenerated = await UserPublicData.findOne({
+    privateUserId: req.user._id,
+  });
+  if (isIDGenerated) {
+    let url = getPublicProfileUrl(isIDGenerated.publicUserId);
+    return res.send({ status: 1, data: { url } });
+  }
+  const uniqueId = getUniqueIdForPrifileShare();
+  isIDGenerated = await UserPublicData.create({
+    privateUserId: req.user._id,
+    publicUserId: uniqueId,
+  });
+  let url = getPublicProfileUrl(isIDGenerated.publicUserId);
+
+  res.send({ status: 1, data: { url } });
+};
+
+const getPublicProfile = async (req, res) => {
+  const { publicId } = req.params;
+  if (!publicId) {
+    return res.send({ status: 0, message: "Invalid Id" });
+  }
+  const isIdPresent = await UserPublicData.findOne({
+    publicUserId: publicId,
+  });
+  if (!isIdPresent) {
+    return res.send({ status: 0, message: "Invalid Id" });
+  }
+  const userData = await user.findOne(
+    { _id: isIdPresent.privateUserId },
+    {
+      firstName: 1,
+      lastName: 1,
+      age: 1,
+      gender: 1,
+      photoUrl: 1,
+      about: 1,
+      skills: 1,
+      socialLinks: 1,
+    }
+  );
+  if (!userData) {
+    return res.send({ status: 0, message: "Invalid user" });
+  }
+  return res.send({ status: 1, data: userData });
+};
+
 module.exports = {
   viewProfile,
   editProfile,
   addAvatar,
+  generatePublicId,
+  getPublicProfile,
 };

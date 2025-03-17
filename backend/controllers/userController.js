@@ -5,7 +5,7 @@ const User = require("../models/user");
 const USER_SAFE_DATA = "firstName lastName photoUrl age gender about skills";
 
 // Get all pending connection requests for the logged-in user
-const getPendingRequests = async (req, res,next) => {
+const getPendingRequests = async (req, res, next) => {
   try {
     const loggedInUser = req.user;
 
@@ -45,7 +45,7 @@ const getUserConnections = async (req, res, next) => {
 
     res.json({ data });
   } catch (err) {
-    next(err)
+    next(err);
   }
 };
 
@@ -68,16 +68,51 @@ const getUserFeed = async (req, res, next) => {
       hideUsersFromFeed.add(req.fromUserId.toString());
       hideUsersFromFeed.add(req.toUserId.toString());
     });
+    // seperate fromUserId and toUserId
+    const userIdsToExclude = connectionRequests.flatMap((item) => [
+      item.fromUserId,
+      item.toUserId,
+    ]);
 
-    const users = await User.find({
-      $and: [
-        { _id: { $nin: Array.from(hideUsersFromFeed) } },
-        { _id: { $ne: loggedInUser._id } },
-      ],
-    })
-      .select(USER_SAFE_DATA)
-      .skip(skip)
-      .limit(limit);
+    targetSkills = loggedInUser.skills;
+    const users = await User.aggregate([
+      // create how many skills match with current user and store it in matchingSkills
+      {
+        $addFields: {
+          matchingSkills: {
+            $filter: {
+              input: "$skills",
+              as: "skill",
+              cond: { $in: ["$$skill", targetSkills] },
+            },
+          },
+        },
+      },
+      // will create a new field to find total number of matchingSkills
+      {
+        $addFields: {
+          numMatchingSkills: { $size: "$matchingSkills" },
+        },
+      },
+      {
+        $project: {
+          password: 0,
+          onesignalPlayerId: 0,
+          createdAt: 0,
+          updatedAt: 0,
+        },
+      },
+      // this will remove all the connected user
+      {
+        $match: {
+          _id: { $not: { $in: userIdsToExclude } },
+        },
+      },
+      // this s required to make sure more number of matches will be in top
+      { $sort: { numMatchingSkills: 1 } },
+      { $skip: skip },
+      { $limit: limit },
+    ]);
 
     res.json({ data: users });
   } catch (err) {

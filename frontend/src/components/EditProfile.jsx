@@ -5,6 +5,9 @@ import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 
+import TagsInput from "react-tagsinput";
+
+import "react-tagsinput/react-tagsinput.css";
 const EditProfile = ({ user }) => {
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);
@@ -14,19 +17,48 @@ const EditProfile = ({ user }) => {
   const [about, setAbout] = useState(user.about || "");
   const [error, setError] = useState("");
   const dispatch = useDispatch();
-  const [showToast, setShowToast] = useState(false);
+  const [showToast, setShowToast] = useState(null);
 
+  const [allTags, setAllTags] = useState({ tags: [...user.skills] });
+  function handleChange(tags) {
+    setAllTags({ tags });
+  }
   const saveProfile = async () => {
     // Clear Errors
     setError("");
     try {
+      if (!["male", "female", "other"].includes(gender)) {
+        setShowToast("Enter a valid Gender type");
+        setTimeout(() => {
+          setShowToast(null);
+        }, 5000);
+        return;
+      }
+      if (allTags.tags.length < 3) {
+        setShowToast("Minimum 3 tags are required");
+        setTimeout(() => {
+          setShowToast("Hint: tags can be games, cooking, coding");
+          setTimeout(() => {
+            setShowToast(null);
+          }, 5000);
+        }, 3000);
+        return;
+      }
       const res = await axios.patch(
         BASE_URL + "/profile/edit",
-        { firstName, lastName, photoUrl, age, gender, about },
+        {
+          firstName,
+          lastName,
+          photoUrl,
+          age,
+          gender,
+          about,
+          skills: allTags.tags,
+        },
         { withCredentials: true }
       );
       dispatch(addUser(res?.data?.data));
-      setShowToast(true);
+      setShowToast("Profile Saved Successfully");
       setTimeout(() => setShowToast(false), 3000);
     } catch (err) {
       setError(err.response.data);
@@ -100,10 +132,19 @@ const EditProfile = ({ user }) => {
                     onChange={(e) => setAbout(e.target.value)}
                   />
                 </label>
+                <TagsInput
+                  className="w-full mb-10 mt-2  px-4 py-2 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={allTags.tags}
+                  onChange={handleChange}
+                />
 
                 <p className="text-red-500">{error}</p>
                 <div className="card-actions justify-center m-2">
-                  <button className="btn btn-primary" type="button" onClick={saveProfile}>
+                  <button
+                    className="btn btn-primary"
+                    type="button"
+                    onClick={saveProfile}
+                  >
                     Save Profile
                   </button>
                 </div>
@@ -111,13 +152,23 @@ const EditProfile = ({ user }) => {
             </div>
           </div>
         </div>
-        <UserCard user={{ firstName, lastName, photoUrl, age, gender, about }} />
+        <UserCard
+          user={{
+            firstName,
+            lastName,
+            photoUrl,
+            age,
+            gender,
+            about,
+            skills: user.skills,
+            matchingSkills: user.matchingSkills,
+          }}
+        />
       </div>
-
-      {showToast && (
-        <div className="toast toast-top toast-center">
-          <div className="alert alert-success">
-            <span>Profile saved successfully.</span>
+      {showToast != null && (
+        <div className="toast toast-top toast-end">
+          <div className="alert alert-error">
+            <span>{showToast}</span>
           </div>
         </div>
       )}

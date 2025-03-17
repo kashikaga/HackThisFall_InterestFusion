@@ -280,7 +280,7 @@ function calc(i1, i2) {
 
 ## 👥 Community
 
-- Join our [Discord](https://discord.gg/38xn7CPK)
+- Join our [Discord](https://discord.gg/sYKpXXxmVp)
 - Follow us on [Twitter](https://x.com/InterestFusion)
 - Read our [Blog](https://blog.interestfusion.com)
 

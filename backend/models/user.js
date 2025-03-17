@@ -70,6 +70,10 @@ const userSchema = new mongoose.Schema(
     onesignalPlayerId: {
       type: String,
     },
+    socialLinks: {
+      instagramLink: { type: String, default: "" },
+      otherLink: { type: String, default: "" },
+    },
   },
   {
     timestamps: true,

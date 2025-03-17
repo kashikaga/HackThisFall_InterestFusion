@@ -25,6 +25,7 @@ const EventCard = ({ event }) => {
           {event.title}
         </h3>
         <p className="text-gray-300 mt-2 text-sm">{event.description}</p>
+        <p className="text-gray-300 mt-2 text-sm">{event.location}</p>
         <span className="text-sm text-purple-400 font-medium mt-3 block">
           📅 {event.date}
         </span>

@@ -26,7 +26,9 @@ const BoredomFighter = ({ onRetry }) => {
 
   return (
     <div className="flex flex-col items-center justify-center space-y-4 p-6 bg-yellow-100 rounded-md shadow-md">
-      <h2 className="text-xl font-bold text-gray-800">Uh oh, feed failed to load!</h2>
+      <h2 className="text-xl font-bold text-gray-800">
+        Uh oh, feed failed to load!
+      </h2>
       <p className="text-gray-700">{joke}</p>
       <div className="flex space-x-2">
         <button
@@ -119,9 +121,7 @@ const Feed = () => {
   // Inform the user if no users are found
   if (!feed || feed.length === 0) {
     return (
-      <h1 className="flex justify-center my-10 text-xl">
-        No new users found!
-      </h1>
+      <h1 className="flex justify-center my-10 text-xl">No new users found!</h1>
     );
   }
 
@@ -158,7 +158,10 @@ const Feed = () => {
 
       {/* Footer */}
       <footer className="mt-10 text-center text-gray-500">
-        <p>&copy; {new Date().getFullYear()} Interest Fusion. All rights reserved.</p>
+        <p>
+          &copy; {new Date().getFullYear()} Interest Fusion. All rights
+          reserved.
+        </p>
       </footer>
     </div>
   );

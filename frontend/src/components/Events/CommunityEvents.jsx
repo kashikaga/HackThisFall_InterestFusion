@@ -1,11 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import EventList from "./EventList";
+import axios from "axios";
+import {jwtDecode} from "jwt-decode";
 
 const CommunityEvents = () => {
   const [events, setEvents] = useState([]);
 
-  const addEvent = (event) => {
+  useEffect(() => {
+    if(localStorage.getItem("u_token") === null){
+      window.location.href = `/community`
+    }
+  },[])
+
+  useEffect(() => {
+    const fetchevents = async () => {
+      const resp = await axios.get("http://localhost:7777/allevents");
+      console.log(resp.data)
+      setEvents(resp.data.events)
+    }
+    fetchevents()
+  }, [])
+  
+
+  const addEvent = async(event) => {
+    console.log(event)
+    const eventdata = {
+      u_id: (jwtDecode(localStorage.getItem("u_token"))).id,
+      title: event.title,
+      description: event.description,
+      date: event.date,
+      location: event.location
+    }
+    const resp = await axios.post("http://localhost:7777/createevent", eventdata);
+    console.log(resp.data)
     setEvents([...events, event]);
   };
 
@@ -126,10 +154,11 @@ const CreateEventForm = ({ addEvent }) => {
   const [eventTitle, setEventTitle] = useState("");
   const [eventDescription, setEventDescription] = useState("");
   const [eventDate, setEventDate] = useState("");
+  const [eventLocation, setEventLocation] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    addEvent({ title: eventTitle, description: eventDescription, date: eventDate });
+    await addEvent({ title: eventTitle, description: eventDescription, date: eventDate, location: eventLocation });
     setEventTitle("");
     setEventDescription("");
     setEventDate("");
@@ -158,6 +187,12 @@ const CreateEventForm = ({ addEvent }) => {
         onChange={(e) => setEventDate(e.target.value)} 
         className="w-full p-3 border rounded bg-gray-900 text-white focus:outline-none focus:ring focus:ring-purple-400" required
       />
+      <input 
+        type="text" value={eventLocation} 
+        onChange={(e) => setEventLocation(e.target.value)} 
+        className="w-full p-3 border rounded bg-gray-900 text-white focus:outline-none focus:ring focus:ring-purple-400" required
+        placeholder="Event Location"
+      />
       <motion.button 
         type="submit" 
         whileHover={{ scale: 1.05 }}
@@ -170,7 +205,7 @@ const CreateEventForm = ({ addEvent }) => {
   );
 };
 
-const CommunityCard = ({ title, description, date }) => {
+const CommunityCard = ({ title, description, date, location }) => {
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.8 }}
@@ -180,7 +215,9 @@ const CommunityCard = ({ title, description, date }) => {
     >
       <h3 className="text-2xl font-bold text-purple-300">{title}</h3>
       <p className="text-gray-300 my-2">{description}</p>
+      <p className="text-gray-300 my-2">{location}</p>
       <span className="text-sm text-purple-400 font-medium">{date}</span>
+      <div></div>
     </motion.div>
   );
 };

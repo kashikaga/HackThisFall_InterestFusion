@@ -1,5 +1,5 @@
 const express = require("express");
-const { fusionRegister, fusionSignup, fusionPublishpost,fusionAuth } = require("../controllers/fusionComm.controller");
+const { fusionRegister, fusionSignup, fusionPublishpost,fusionAuth, getFusionPost } = require("../controllers/fusionComm.controller");
 
 const router = express.Router();
 
@@ -15,4 +15,6 @@ router.post("/fusionpublish", fusionPublishpost);
 
 //authentication
 router.post("/fusionauth", fusionAuth);
+
+router.get("/getposts", getFusionPost);
 module.exports = router;

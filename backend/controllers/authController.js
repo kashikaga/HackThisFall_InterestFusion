@@ -5,6 +5,7 @@ const { validateSignUpData } = require("../utils/validation");
 const sendEmail = require("../config/sendEmail");
 const validator = require("validator");
 const { z } = require("zod");
+const removeSensitiveData = require("../utils/removeSensitiveData");
 
 // Schema definitions
 const emailSchema = z.string().email("Invalid email format");
@@ -145,7 +146,16 @@ class AuthController {
   async signup(req, res, next) {
     try {
       validateSignUpData(req);
-      const { firstName, lastName, emailId, password, playerId } = req.body;
+      const {
+        firstName,
+        lastName,
+        emailId,
+        password,
+        playerId,
+        skills,
+        otherLink,
+        instagramLink,
+      } = req.body;
 
       const passwordHash = await bcrypt.hash(password, 10);
       const user = new User({
@@ -153,7 +163,12 @@ class AuthController {
         lastName,
         emailId,
         password: passwordHash,
+        skills: skills ?? [],
         onesignalPlayerId: playerId,
+        socialLinks: {
+          instagramLink,
+          otherLink,
+        },
       });
 
       const savedUser = await user.save();
@@ -174,7 +189,10 @@ class AuthController {
         welcomeTemplate.html
       );
 
-      res.json({ message: "Welcome to Interest Fusion!", data: savedUser });
+      res.json({
+        message: "Welcome to Interest Fusion!",
+        data: res.send(removeSensitiveData(savedUser)),
+      });
     } catch (err) {
       next(err);
     }
@@ -189,11 +207,11 @@ class AuthController {
         password: password,
         onesignalPlayerId: playerId,
       });
-      
+
       if (!loginSchemaValidator.success) {
-        return res
-          .status(400)
-          .send({ message: "Validation Failed :" + loginSchemaValidator.error });
+        return res.status(400).send({
+          message: "Validation Failed :" + loginSchemaValidator.error,
+        });
       }
 
       const user = await User.findOne({ emailId: emailId });
@@ -223,8 +241,7 @@ class AuthController {
           loginTemplate.text,
           loginTemplate.html
         );
-
-        res.send(user);
+        res.send(removeSensitiveData(user));
       } else {
         throw new Error("Invalid credentials");
       }
@@ -234,7 +251,7 @@ class AuthController {
   }
 
   // Logout controller
-  async logout(req, res ,next) {
+  async logout(req, res, next) {
     res.cookie("token", null, {
       expires: new Date(Date.now()),
       sameSite: "None",
@@ -247,7 +264,7 @@ class AuthController {
   async forgotPassword(req, res) {
     const userEmailID = req.body.emailId;
     const checkEmailSchema = emailSchema.safeParse(userEmailID);
-    
+
     if (!checkEmailSchema) {
       return res
         .status(400)
@@ -269,12 +286,12 @@ class AuthController {
       token: token,
     });
     await newToken.save();
-    
+
     const isEmailSent = await sendEmail(userEmailID, subject, text);
     if (isEmailSent) {
       res.send({ status: 1, message: "OTP successfully sent to EmailId" });
     } else {
-      res.send({ status: 0, message: "Something went wrong" });
+      res.send({ status: 0, message: "Unable to send OTP to this Email Id" });
     }
   }
 
@@ -282,7 +299,7 @@ class AuthController {
   async resendOTP(req, res) {
     const userEmailID = req.body.emailId;
     const checkEmailSchema = emailSchema.safeParse(userEmailID);
-    
+
     if (!checkEmailSchema) {
       return res
         .status(400)
@@ -328,9 +345,9 @@ class AuthController {
     });
 
     if (!verifyOTPSchemaValdate) {
-      return res
-        .status(400)
-        .send({ message: "Validation Failed :" + verifyOTPSchemaValdate.error });
+      return res.status(400).send({
+        message: "Validation Failed :" + verifyOTPSchemaValdate.error,
+      });
     }
 
     const isUserPresent = await Token.findOne({ emailId });
@@ -366,9 +383,9 @@ class AuthController {
     });
 
     if (!updatePasswordSchemaValidate.success) {
-      return res
-        .status(400)
-        .send({ message: "Validation Failed :" + updatePasswordSchemaValidate.error });
+      return res.status(400).send({
+        message: "Validation Failed :" + updatePasswordSchemaValidate.error,
+      });
     }
 
     const isUserPresent = await Token.findOne({ emailId });
