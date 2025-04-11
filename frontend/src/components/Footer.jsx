@@ -52,7 +52,7 @@ const Footer = () => {
                   className="flex items-center space-x-3 text-gray-400 hover:text-white transition-colors"
                 >
                   <Phone className="w-5 h-5" />
-                  <span>+91 7222993745</span>
+                  <span>+91 8866089546</span>
                 </a>
               </li>
               <li>
@@ -66,7 +66,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center space-x-3 text-gray-400 hover:text-white transition-colors">
                 <MapPin className="w-5 h-5" />
-                <span>Mumbai, India</span>
+                <span>Gujarat, India</span>
               </li>
             </ul>
           </div>
