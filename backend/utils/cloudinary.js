@@ -1,21 +1,23 @@
-// const { v2: cloudinary } = require('cloudinary');
-import { v2 as cloudinary } from "cloudinary";
-import streamifier from "streamifier";
-import dotenv from "dotenv";
-dotenv.config(); // Add this line to load .env variables
-// console.log("enterde cloudinary")
+const cloudinary = require("cloudinary").v2;
+const streamifier = require("streamifier");
+const dotenv = require("dotenv");
+
+dotenv.config(); // Load environment variables
+
 console.log(
-  "this are envvariables",
+  "These are env variables:",
   process.env.API_KEY,
   process.env.API_SECRET,
   process.env.CLOUD_NAME
 );
+
 const upload_on_cloudinary = async (fileBuffer, folderName = "demo") => {
   cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.API_KEY,
-    api_secret: process.env.API_SECRET, // Replace this with an environment variable for security
+    api_secret: process.env.API_SECRET,
   });
+
   try {
     if (!fileBuffer) {
       console.log("No file buffer provided");
@@ -25,19 +27,18 @@ const upload_on_cloudinary = async (fileBuffer, folderName = "demo") => {
     return new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: folderName, // Optional folder in Cloudinary
+          folder: folderName,
         },
         (error, result) => {
           if (error) {
             console.error("Cloudinary upload error:", error);
             reject(error);
           } else {
-            resolve(result.secure_url); // Return the secure URL of the uploaded image
+            resolve(result.secure_url);
           }
         }
       );
 
-      // Pipe the file buffer to Cloudinary's upload stream
       streamifier.createReadStream(fileBuffer).pipe(stream);
     });
   } catch (error) {
@@ -46,4 +47,4 @@ const upload_on_cloudinary = async (fileBuffer, folderName = "demo") => {
   }
 };
 
-export { upload_on_cloudinary };
+module.exports = { upload_on_cloudinary };
