@@ -1,6 +1,6 @@
 const express = require("express");
 const authRouter = express.Router();
-const authController = require("../controllers/authController");
+const authController = require("../controllers/authController"); // already an instance
 
 // Authentication Routes
 authRouter.post("/signup", authController.signup);
